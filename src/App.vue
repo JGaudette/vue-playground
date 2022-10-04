@@ -7,18 +7,18 @@
 
     <div id="sign-in-area"></div>
 
-    <main class="spinner" v-if="$store.state.globalLoading">
+    <main class="spinner" v-if="mainStore.globalLoading">
       <img src="@/assets/puff.svg" />
     </main>
 
     <main class="column" v-else>
-      <div v-if="$store.state.currentUser">
-        currently logged in user: {{ $store.state.currentUser.email }}
+      <div v-if="mainStore.currentUser">
+        currently logged in user: {{ mainStore.currentUser.email }}
       </div>
-      <router-view v-if="$store.state.currentUser" />
+      <router-view v-if="mainStore.currentUser" />
 
       <div v-else class="app-login">
-        <button id="sign-in-button-google" @click="$store.dispatch('login')">login with google</button>
+        <button id="sign-in-button-google" @click="mainStore.login">login with google</button>
         <hr />
         <div>or login with username and password</div>
         <div>
@@ -41,9 +41,16 @@
 
 <script>
 import firebase from "firebase";
+import {useMainStore} from "./store"
 
 export default {
   name: "App",
+  setup(){
+    const mainStore = useMainStore();
+    return {
+      mainStore
+    }
+  },
   data() {
     return {
       email: "qesandbox@gmail.com",
@@ -57,22 +64,22 @@ export default {
     };
 
     var firebaseApp = firebase.initializeApp(firebaseConfig);
-    this.$store.dispatch("setFirebase", firebaseApp);
+    this.mainStore.firebase = firebaseApp;
     window.firebase = firebaseApp;
 
     firebaseApp.auth().onAuthStateChanged((oauth) => {
-      this.$store.dispatch("setUser", oauth);
-      this.$store.dispatch("setGlobalLoading", false);
+      this.mainStore.currentUser = oauth;
+      this.mainStore.globalLoading = false;
     });
 
     setTimeout(() => {
-      this.$store.dispatch("setGlobalLoading", false);
+      this.mainStore.globalLoading = false;
     }, 5000);
   },
   methods: {
     async loginEmailPassword() {
       try {
-        await this.$store.dispatch("loginEmailPass", { email: this.email, password: this.password });
+        await this.mainStore.loginEmailPass({ email: this.email, password: this.password });
       } catch (ex) {
         alert(ex.message);
       }
