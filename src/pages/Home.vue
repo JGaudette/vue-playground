@@ -3,10 +3,14 @@
     👋 Welcome Home
 
     <div class="tasks">
-      <div class="task" :key="task.id" v-for="task in tasks">
+      <div class="header">Action</div>
+      <div class="header">Value</div>
+      <div class="header">Notes</div>
+      <template :key="task.id" v-for="task in tasks">
         <input type="checkbox" v-model="task.checked" />
-        <span>${{task.creditValue}} - {{task.label}}</span>
-      </div>
+        <span>${{task.creditValue}}</span>
+        <span>{{task.label}}</span>
+      </template>
     </div>
 
     <div class="danger" v-if="error">{{error}}</div>
@@ -56,7 +60,12 @@ export default {
 
 <style lang="scss" scoped>
 .home-container {
-  
-
+  .tasks {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    .header{
+      background-color: lightblue;
+    }
+  }
 }
 </style>
