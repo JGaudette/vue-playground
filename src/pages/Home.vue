@@ -63,6 +63,7 @@ export default {
   .tasks {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    
     .header{
       background-color: lightblue;
     }
